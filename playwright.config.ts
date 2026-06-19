@@ -1,6 +1,44 @@
 /// <reference types="node" />
 import { defineConfig, devices } from '@playwright/test';
 
+const selectedBrowser = (process.env.BROWSER ?? '').trim().toLowerCase();
+const testFileForReport = (process.env.TEST_FILE ?? '').trim();
+const runMode = (process.env.RUN_MODE ?? '').trim().toLowerCase();
+
+
+/**
+ * Sanitizes a string so it can be safely used as part of a folder name.
+ */
+function sanitizeForPath(value: string): string {
+  return value
+    .replace(/^[.\\/]+/, '') // remove leading dots, slashes, and backslashes
+    .replace(/[\\/]+/g, '__') // replace remaining slashes and backslashes with double underscores
+    .replace(/[^a-zA-Z0-9._-]+/g, '_') // replace any other invalid characters with underscores
+    .replace(/_+/g, '_') // replace multiple underscores with a single underscore
+    .replace(/^_+|_+$/g, '') // remove leading and trailing underscores
+    .toLowerCase();
+}
+
+// Determine report paths based on whether we're running a single test file or the entire suite
+const individualReportFolder = testFileForReport
+  ? `test-results/individual/${sanitizeForPath(testFileForReport)}/${selectedBrowser || 'unknown-browser'}/html-report`
+  : 'test-results/html-report';
+
+ // For JUnit, separate file for each test file when running in single mode, 
+ // but a single file for the entire suite when running all tests 
+const individualJunitFile = testFileForReport
+  ? `test-results/individual/${sanitizeForPath(testFileForReport)}/${selectedBrowser || 'unknown-browser'}/junit-results.xml`
+  : 'test-results/junit-results.xml';
+
+if (runMode === 'single' && !selectedBrowser) {
+  throw new Error('BROWSER is required for single test runs. Use edge, chrome, or firefox.');
+}
+
+// If BROWSER is set, validate that it's one of the allowed values
+if (selectedBrowser && !['edge', 'chrome', 'firefox'].includes(selectedBrowser)) {
+  throw new Error('Invalid BROWSER value. Allowed values: edge, chrome, firefox.');
+}
+
 
 
 /**
@@ -27,15 +65,12 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['list'],
-    ['junit', { outputFile: 'test-results/junit-results.xml' }],
-    ['html', { outputFolder: 'test-results/html-report' }]
+    ['junit', { outputFile: individualJunitFile }], //
+    ['html', { outputFolder: individualReportFolder }]
   ],
   outputDir: 'test-results',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
-
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
@@ -46,20 +81,6 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    /*{
-      name: 'chromium',
-      use: {...devices['Desktop Chrome'] },
-    },
-
-    {
-      name: 'firefox',      
-      use: {...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: {...devices['Desktop Safari'] },
-    },   IN THIS CASE WE ONLY USE FOR EDGE BROWSER*/ 
     {
       name: 'edge',
       use: {
@@ -72,26 +93,23 @@ export default defineConfig({
              permissions: ['local-network-access'] // grant local network access permission
       }, 
     },
+    {
+      name: 'chrome',
+      use: {
+        channel: 'chrome',
+        headless: false,
+        launchOptions: { args: ['--incognito'] },
+        ...devices['Desktop Chrome']
+      }
+    },
+    {
+      name: 'firefox',
+      use: {
+        headless: false,
+        ...devices['Desktop Firefox']
+      }
+    },
 
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
   ],
 
   /* Run your local dev server before starting the tests */
