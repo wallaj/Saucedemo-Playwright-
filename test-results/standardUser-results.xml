@@ -1,0 +1,10 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="7.982665">
+<testsuite name="standardUser.spec.ts" timestamp="2026-06-19T22:33:59.531Z" hostname="chrome" tests="3" failures="0" skipped="0" time="0.182" errors="0">
+<testcase name="standard user flow › test1 - login redirects to inventory" classname="standardUser.spec.ts" time="0.067">
+</testcase>
+<testcase name="standard user flow › test2 - can add item to cart" classname="standardUser.spec.ts" time="0.051">
+</testcase>
+<testcase name="standard user flow › test3 - can open cart and see selected product" classname="standardUser.spec.ts" time="0.064">
+</testcase>
+</testsuite>
+</testsuites>
