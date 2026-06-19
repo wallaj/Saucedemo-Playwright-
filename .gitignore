@@ -4,6 +4,10 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+/test-results/
+/playwright-report/*
+!/playwright-report/**/
+!/playwright-report/**/index.html
 
 # Excluded local-only tests
 tests/test-1.spec.ts
