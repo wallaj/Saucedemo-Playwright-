@@ -1,6 +1,6 @@
 import { expect, Page, test } from '@playwright/test';
-import { loginSauceDemo } from './utils/auth.utils';
-import { navigateToConfiguredUrl } from './utils/navigation.utils';
+import { loginSauceDemo } from '../utils/auth.utils';
+import { navigateToConfiguredUrl } from '../utils/navigation.utils';
 
 let sharedPage: Page;
 
