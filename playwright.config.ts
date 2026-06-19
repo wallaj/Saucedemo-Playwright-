@@ -3,6 +3,21 @@ import { defineConfig, devices } from '@playwright/test';
 
 const selectedBrowser = (process.env.BROWSER ?? '').trim().toLowerCase();
 const testFileForReport = (process.env.TEST_FILE ?? '').trim();
+
+// Extract spec name from TEST_FILE if provided
+function getSpecName(): string {
+  if (testFileForReport) {
+    // Extract filename without extension: tests/standardUser.spec.ts -> standardUser
+    return testFileForReport
+      .split('/')
+      .pop()
+      ?.replace('.spec.ts', '')
+      ?.replace('.spec.js', '') || 'unknown';
+  }
+  return 'all-tests';
+}
+
+const specName = getSpecName();
 const runMode = (process.env.RUN_MODE ?? '').trim().toLowerCase();
 
 
@@ -19,16 +34,9 @@ function sanitizeForPath(value: string): string {
     .toLowerCase();
 }
 
-// Determine report paths based on whether we're running a single test file or the entire suite
-const individualReportFolder = testFileForReport
-  ? `test-results/individual/${sanitizeForPath(testFileForReport)}/${selectedBrowser || 'unknown-browser'}/html-report`
-  : 'test-results/html-report';
-
- // For JUnit, separate file for each test file when running in single mode, 
- // but a single file for the entire suite when running all tests 
-const individualJunitFile = testFileForReport
-  ? `test-results/individual/${sanitizeForPath(testFileForReport)}/${selectedBrowser || 'unknown-browser'}/junit-results.xml`
-  : 'test-results/junit-results.xml';
+// Determine report paths based on spec name
+const reportFolder = `playwright-report/${specName}`;
+const junitFile = `test-results/${specName}-results.xml`;
 
 if (runMode === 'single' && !selectedBrowser) {
   throw new Error('BROWSER is required for single test runs. Use edge, chrome, or firefox.');
@@ -65,8 +73,8 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['list'],
-    ['junit', { outputFile: individualJunitFile }], //
-    ['html', { outputFolder: individualReportFolder }]
+    ['junit', { outputFile: junitFile }],
+    ['html', { outputFolder: reportFolder }]
   ],
   outputDir: 'test-results',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -74,7 +82,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
-  timeout: 1500000,
+  timeout: 10 * 60 * 1000,
     expect: {
         timeout: 10 * 10000,
   },
@@ -109,8 +117,11 @@ export default defineConfig({
         ...devices['Desktop Firefox']
       }
     },
-
-  ],
+  ].filter(project => {
+    // If BROWSER is set, only include that browser; otherwise include all
+    if (!selectedBrowser) return true;
+    return project.name === selectedBrowser;
+  }),
 
   /* Run your local dev server before starting the tests */
   // webServer: {
