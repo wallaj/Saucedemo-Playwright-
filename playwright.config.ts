@@ -35,7 +35,8 @@ function sanitizeForPath(value: string): string {
 }
 
 // Determine report paths based on spec name
-const reportFolder = `playwright-report/${specName}`;
+const browserNameForReport = selectedBrowser || 'all-browsers';
+const reportFolder = `playwright-report/${specName}/${browserNameForReport}`;
 const junitFile = `test-results/${specName}-results.xml`;
 
 if (runMode === 'single' && !selectedBrowser) {
