@@ -1,13 +1,16 @@
 import { expect, Page, test } from '@playwright/test';
+import { LoginPage } from '../pageObjects/LoginPage';
 import { loginSauceDemo } from '../utils/auth.utils';
 import { navigateToConfiguredUrl } from '../utils/navigation.utils';
 
 let sharedPage: Page;
+let loginPage: LoginPage;
 
 test.describe.serial('UserType', () => {
   test.beforeAll(async ({ browser }) => {
     const context = await browser.newContext();
     sharedPage = await context.newPage();
+    loginPage = new LoginPage(sharedPage);
     await navigateToConfiguredUrl(sharedPage);
   });
 
@@ -22,8 +25,8 @@ test.describe.serial('UserType', () => {
   });
 
   test('test2 - locked user sees error message', async () => {
-    await navigateToConfiguredUrl(sharedPage);
+    await loginPage.goto();
     await loginSauceDemo(sharedPage, 'locked');
-    await expect(sharedPage.locator('[data-test="error"]')).toContainText('Sorry, this user has been locked out.');
+    await loginPage.expectLockedUserError();
   });
 });
