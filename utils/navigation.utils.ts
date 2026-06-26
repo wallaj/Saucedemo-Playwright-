@@ -14,11 +14,11 @@ export function resolveBaseUrl(explicitUrl?: string): string {
   }
 
   return normalized;
-}
+};
 
 /**
  * Navigates to the configured URL.
  */
 export async function navigateToConfiguredUrl(page: Page, explicitUrl?: string): Promise<void> {
   await page.goto(resolveBaseUrl(explicitUrl), { waitUntil: 'domcontentloaded' });
-}
+};

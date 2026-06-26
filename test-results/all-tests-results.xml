@@ -1,0 +1,62 @@
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="21.342108000040053">
+<testsuite name="standardUser.spec.ts" timestamp="2026-06-26T04:34:40.174Z" hostname="chrome" tests="6" failures="0" skipped="0" time="12.415" errors="0">
+<testcase name="standard user flow › test1 - login redirects to inventory" classname="standardUser.spec.ts" time="0.569">
+<system-out>
+<![CDATA[[SETUP] Starting browser context and login for standard user
+[SETUP] Login completed and page objects initialized
+[TEST1] Verifying redirect to inventory page
+[TEST1] Inventory page visible with Products header
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test2 - can add item to cart" classname="standardUser.spec.ts" time="5.288">
+<system-out>
+<![CDATA[[TEST2] Adding 3 product(s) to cart
+[TEST2] Added to cart: Sauce Labs Backpack
+[TEST2] Added to cart: Sauce Labs Bike Light
+[TEST2] Added to cart: Sauce Labs Fleece Jacket
+[TEST2] Cart badge updated to 3
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test3 - Sort products by name and price" classname="standardUser.spec.ts" time="2.683">
+<system-out>
+<![CDATA[[TEST3] Sorting products by name descending(Z-A)
+[TEST3] Products sorted by name descending
+[TEST3] Sorting products by name ascending(A-Z)
+[TEST3] Products sorted by name ascending
+[TEST3] Sorting products by price high to low
+[TEST3] Products sorted by price high to low
+[TEST3] Sorting products by price low to high
+[TEST3] Products sorted by price low to high
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test4 - can open cart and see selected product" classname="standardUser.spec.ts" time="1.115">
+<system-out>
+<![CDATA[[TEST4] Opening cart page
+[TEST4] Product visible in cart: Sauce Labs Backpack
+[TEST4] Product visible in cart: Sauce Labs Bike Light
+[TEST4] Product visible in cart: Sauce Labs Fleece Jacket
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test5 - can continue shopping from cart" classname="standardUser.spec.ts" time="1.097">
+<system-out>
+<![CDATA[[TEST5] Clicking "Continue Shopping" to return to inventory
+[TEST5] Returned to inventory page
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test6 - can remove item from cart" classname="standardUser.spec.ts" time="1.663">
+<system-out>
+<![CDATA[[TEST6] Removing products from cart
+[TEST6] Number of previously added products: 3
+[TEST6] Removed from cart: Sauce Labs Backpack
+[TEST6] Cart badge updated to 2
+[TEARDOWN] Closing browser context
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

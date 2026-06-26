@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { navigateToConfiguredUrl } from './navigation.utils';
+import { LoginPage } from '../pageObjects/LoginPage';
 
 export type UserType = 'standard' | 'locked' | 'problem' | 'performance';
 
@@ -23,10 +23,9 @@ export async function loginSauceDemo(page: Page, userType: UserType): Promise<vo
 
   if (!credentials) {
     throw new Error(`Unsupported user type: ${userType}`);
-  }
+  };
 
-  await navigateToConfiguredUrl(page);
-  await page.getByPlaceholder('Username').fill(credentials.username);
-  await page.getByPlaceholder('Password').fill(credentials.password);
-  await page.getByRole('button', { name: 'Login' }).click();
-}
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login(credentials.username, credentials.password);
+};
