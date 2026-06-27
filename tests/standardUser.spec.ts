@@ -5,10 +5,13 @@ import { loginSauceDemo } from '../utils/auth.utils';
 import { pauseHalfSecond } from '../utils/wait.utils';
 import { ProductSortPage } from '../pageObjects/ProductSortPage';
 import { pauseOneSecond } from '../utils/wait.utils';
+import { CheckoutPage } from '../pageObjects/CheckoutPage';
 
 let sharedPage: Page;
 let cartPage: CartPage;
 let inventoryActionsPage: InventoryActionsPage;
+let checkoutPage: CheckoutPage;
+
 const cartProducts = [
   { suffix: 'sauce-labs-backpack', name: 'Sauce Labs Backpack' },
   { suffix: 'sauce-labs-bike-light', name: 'Sauce Labs Bike Light' },
@@ -25,6 +28,8 @@ const cartProducts = [
  * - Remove from cart functionality
  * 
  * Note: Suite runs serially to preserve state across tests
+ * 
+ * Author: Marcos Urzúa
  */
 test.describe.serial('standard user flow', () => {
   test.beforeAll(async ({ browser }) => {
@@ -33,6 +38,7 @@ test.describe.serial('standard user flow', () => {
     sharedPage = await context.newPage();
     cartPage = new CartPage(sharedPage);
     inventoryActionsPage = new InventoryActionsPage(sharedPage);
+    checkoutPage = new CheckoutPage(sharedPage);
     await loginSauceDemo(sharedPage, 'standard');
     console.log('[SETUP] Login completed and page objects initialized');
   });
@@ -172,4 +178,133 @@ test.describe.serial('standard user flow', () => {
     await pauseOneSecond(sharedPage); // Optional pause for visual validation
   });
 
-});
+  /**
+   * Test 7: Proceed to Checkout Functionality
+   * Scope: Verify that user can proceed to checkout from cart page.    
+   * Validations:
+   * - Checkout button is clickable
+   * - User is navigated to checkout-step-one.html
+   * Out of scope: Checkout form submission, payment processing
+   */
+  test('test7 - go to checkout', async () => {
+    console.log('[TEST7] Proceeding to checkout from cart');
+    await cartPage.proceedToCheckout();
+    await checkoutPage.expectCheckoutStepOne();
+    console.log('[TEST7] Navigated to checkout step one page');
+    await pauseOneSecond(sharedPage); // Optional pause for visual validation
+  });
+  
+  /**
+   * Test 8: Cancel Button Functionality
+   * Scope: Verify that user can cancel checkout and return to cart page.
+   * Validations:
+   * - Cancel button is clickable
+   * - User is navigated back to cart page
+   * Out of scope: Checkout form submission, payment processing
+   */
+  test('test8 - check Cancel button', async () => {
+    console.log('[TEST8] Clicking "Cancel" to return to cart');
+    await checkoutPage.cancelCheckout();
+    await expect(sharedPage).toHaveURL(/.*cart\.html/);
+    console.log('[TEST8] Returned to cart page');
+    await pauseOneSecond(sharedPage); // Optional pause for visual validation
+  });
+
+  /**
+   * Test 9: Checkout Form Validation for Empty Fields
+   * Scope: Verify that checkout form displays error messages when required fields are empty.     
+   *  Validations:    
+   * - Continue button is clickable
+   * - Error message is displayed for empty fields
+   *  Out of scope: Successful form submission, payment processing
+   */
+  test('test9 - Validation of empty fields behavior', async () => {
+    console.log('[TEST9] Testing checkout form validation for empty fields');
+    await cartPage.proceedToCheckout();
+    await checkoutPage.expectCheckoutStepOne();
+    console.log('[TEST9] Checkout step one page loaded'); 
+    await checkoutPage.continueToOverview();
+    // Expect error message for empty fields
+    const errorMessage = sharedPage.locator('[data-test="error"]');
+    await expect(errorMessage).toBeVisible();
+    console.log('[TEST9] Error message displayed for empty fields');
+    await pauseOneSecond(sharedPage); // Optional pause for visual validation
+    await checkoutPage.errorButton.click(); // Dismiss error message
+  });
+
+  /**
+   * Test 10: Fill Checkout Form and Continue
+   * Scope: Verify that user can fill out checkout form and proceed to overview page. 
+   * Validations:
+   * - First name, last name, and postal code fields are fillable
+   * - Continue button is clickable
+   * - User is navigated to checkout-step-two.html
+   * Out of scope: Payment processing, order confirmation
+   */
+  test('test10 - fill checkout form and continue', async () => {
+    console.log('[TEST10] Filling checkout form with customer information');
+    await checkoutPage.expectCheckoutStepOne();
+    await checkoutPage.fillCustomerInformation('Patricio', 'Rey', '12345');
+    console.log('[TEST10] Customer information filled');
+    await pauseHalfSecond(sharedPage); // Optional pause for visual validation
+    await checkoutPage.continueToOverview();
+    await checkoutPage.expectCheckoutStepTwo();
+    console.log('[TEST10] Navigated to checkout step two page');
+    await pauseOneSecond(sharedPage); // Optional pause for visual validation
+  });
+
+  /**
+   * Test 11: Cancel Checkout from Step Two
+   * Scope: Verify that user can cancel checkout from step two and return to inventory page.
+   * Validations:
+   * - Cancel button is clickable
+   * - User is navigated back to inventory page
+   * Out of scope: Checkout form submission, payment processing
+   *  
+   * Note: This test is intentionally placed after test10 to ensure that the checkout step 
+   * two page is reached before testing the cancel functionality.
+   */
+
+  test('test11 - cancel checkout from step two', async () => {
+    console.log('[TEST11] Clicking "Cancel" to return to cart from checkout step two');
+    await checkoutPage.cancelCheckout();
+    await expect(sharedPage).toHaveURL(/.*inventory\.html/);  
+    console.log('[TEST11] Returned to inventory page');
+    await pauseHalfSecond(sharedPage); // Optional pause for visual validation
+    await cartPage.openCart();
+  });
+
+  /**
+   * Test 12: Checkout Overview Validation
+   * Scope: Verify that checkout overview page displays correct summary information.
+   * Validations:
+   * - Checkout item total, tax, and total are visible
+   * Out of scope: Payment processing, order confirmation
+   * Note: This test is intentionally placed after test10 to ensure that the checkout step
+   * two page is reached before testing the overview summary visibility.
+   */
+  test('test12 - Checkout Overview Validation', async () => {
+    console.log('[TEST12] Proceeding to checkout overview page');
+    await cartPage.proceedToCheckout();
+    await checkoutPage.expectCheckoutStepOne();
+    await checkoutPage.fillCustomerInformation('Patricio', 'Rey', '12345');
+    await checkoutPage.continueToOverview();
+    await checkoutPage.expectCheckoutStepTwo();
+    console.log('[TEST12] Checkout overview page loaded');
+    await checkoutPage.expectSummaryVisible();
+    console.log('[TEST12] Checkout summary is visible');
+    await pauseOneSecond(sharedPage); // Optional pause for visual validation
+  });  
+
+  test('test13 - Finish Checkout and Return Home', async () => {
+    console.log('[TEST13] Finishing checkout and returning home');
+    await expect(checkoutPage.finishButton).toBeVisible();
+    await checkoutPage.finishCheckout();
+    await checkoutPage.expectCheckoutComplete();
+    await expect(checkoutPage.checkoutCompleteHeader).toBeVisible();
+    await expect(checkoutPage.checkoutCompleteText).toBeVisible();
+    console.log('[TEST13] Checkout complete page loaded');
+    await pauseOneSecond(sharedPage); // Optional pause for visual validation
+  }); 
+
+});  

@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="21.342108000040053">
-<testsuite name="standardUser.spec.ts" timestamp="2026-06-26T04:34:40.174Z" hostname="chrome" tests="6" failures="0" skipped="0" time="12.415" errors="0">
-<testcase name="standard user flow › test1 - login redirects to inventory" classname="standardUser.spec.ts" time="0.569">
+<testsuites id="" name="" tests="13" failures="0" skipped="0" errors="0" time="36.066982000023124">
+<testsuite name="standardUser.spec.ts" timestamp="2026-06-27T21:18:01.123Z" hostname="chrome" tests="13" failures="0" skipped="0" time="23.47" errors="0">
+<testcase name="standard user flow › test1 - login redirects to inventory" classname="standardUser.spec.ts" time="0.588">
 <system-out>
 <![CDATA[[SETUP] Starting browser context and login for standard user
 [SETUP] Login completed and page objects initialized
@@ -9,7 +9,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="standard user flow › test2 - can add item to cart" classname="standardUser.spec.ts" time="5.288">
+<testcase name="standard user flow › test2 - can add item to cart" classname="standardUser.spec.ts" time="5.265">
 <system-out>
 <![CDATA[[TEST2] Adding 3 product(s) to cart
 [TEST2] Added to cart: Sauce Labs Backpack
@@ -19,7 +19,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="standard user flow › test3 - Sort products by name and price" classname="standardUser.spec.ts" time="2.683">
+<testcase name="standard user flow › test3 - Sort products by name and price" classname="standardUser.spec.ts" time="2.662">
 <system-out>
 <![CDATA[[TEST3] Sorting products by name descending(Z-A)
 [TEST3] Products sorted by name descending
@@ -32,7 +32,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="standard user flow › test4 - can open cart and see selected product" classname="standardUser.spec.ts" time="1.115">
+<testcase name="standard user flow › test4 - can open cart and see selected product" classname="standardUser.spec.ts" time="1.088">
 <system-out>
 <![CDATA[[TEST4] Opening cart page
 [TEST4] Product visible in cart: Sauce Labs Backpack
@@ -41,19 +41,71 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="standard user flow › test5 - can continue shopping from cart" classname="standardUser.spec.ts" time="1.097">
+<testcase name="standard user flow › test5 - can continue shopping from cart" classname="standardUser.spec.ts" time="1.072">
 <system-out>
 <![CDATA[[TEST5] Clicking "Continue Shopping" to return to inventory
 [TEST5] Returned to inventory page
 ]]>
 </system-out>
 </testcase>
-<testcase name="standard user flow › test6 - can remove item from cart" classname="standardUser.spec.ts" time="1.663">
+<testcase name="standard user flow › test6 - can remove item from cart" classname="standardUser.spec.ts" time="1.622">
 <system-out>
 <![CDATA[[TEST6] Removing products from cart
 [TEST6] Number of previously added products: 3
 [TEST6] Removed from cart: Sauce Labs Backpack
 [TEST6] Cart badge updated to 2
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test7 - go to checkout" classname="standardUser.spec.ts" time="1.078">
+<system-out>
+<![CDATA[[TEST7] Proceeding to checkout from cart
+[TEST7] Navigated to checkout step one page
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test8 - check Cancel button" classname="standardUser.spec.ts" time="1.055">
+<system-out>
+<![CDATA[[TEST8] Clicking "Cancel" to return to cart
+[TEST8] Returned to cart page
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test9 - Validation of empty fields behavior" classname="standardUser.spec.ts" time="1.157">
+<system-out>
+<![CDATA[[TEST9] Testing checkout form validation for empty fields
+[TEST9] Checkout step one page loaded
+[TEST9] Error message displayed for empty fields
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test10 - fill checkout form and continue" classname="standardUser.spec.ts" time="3.23">
+<system-out>
+<![CDATA[[TEST10] Filling checkout form with customer information
+[TEST10] Customer information filled
+[TEST10] Navigated to checkout step two page
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test11 - cancel checkout from step two" classname="standardUser.spec.ts" time="0.628">
+<system-out>
+<![CDATA[[TEST11] Clicking "Cancel" to return to cart from checkout step two
+[TEST11] Returned to inventory page
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test12 - Checkout Overview Validation" classname="standardUser.spec.ts" time="2.873">
+<system-out>
+<![CDATA[[TEST12] Proceeding to checkout overview page
+[TEST12] Checkout overview page loaded
+[TEST12] Checkout summary is visible
+]]>
+</system-out>
+</testcase>
+<testcase name="standard user flow › test13 - Finish Checkout and Return Home" classname="standardUser.spec.ts" time="1.152">
+<system-out>
+<![CDATA[[TEST13] Finishing checkout and returning home
+[TEST13] Checkout complete page loaded
 [TEARDOWN] Closing browser context
 ]]>
 </system-out>
